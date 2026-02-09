@@ -1,1 +1,1 @@
-{\n  \"name\": \"your-project-name\",\n  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"http-proxy\": \"^1.18.0\",\n    \"express\": \"^4.17.1\"\n  }\n}
+{"name":"wow-proxy","version":"1.0.0","description":"Hidden web proxy","main":"app.js","scripts":{"start":"node app.js"},"dependencies":{"express":"^4.18.2","http-proxy":"^1.18.1","cors":"^2.8.5"}}
