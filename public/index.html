@@ -3,14 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ermmmmmm</title>
-    <style>
-        body { display: none; }
-    </style>
+    <title>Document</title>
+    <script>
+        let tripleClickTimeout;
+        let clicks = 0;
+
+        document.addEventListener('click', function() {
+            clicks++;
+
+            if (clicks === 3) {
+                window.location.href = 'https://example.com';
+            }
+
+            clearTimeout(tripleClickTimeout);
+            tripleClickTimeout = setTimeout(function() {
+                clicks = 0;
+            }, 500);
+        });
+    </script>
 </head>
 <body>
-    <script>
-        window.location.href = 'https://example.com'; // Change this to your desired target
-    </script>
+    <h1>Welcome to the page</h1>
 </body>
 </html>
