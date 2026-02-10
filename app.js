@@ -17,7 +17,7 @@ proxy.on('error', (err, req, res) => {
   }
 
   res.status(502).json({
-    error: 'Unable to load target URL through proxy.',
+    error: 'Unable to load target URL.',
     details: err.message,
   });
 });
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/proxy', (req, res) => {
+app.get('/load', (req, res) => {
   const rawUrl = (req.query.url || '').toString().trim();
 
   if (!rawUrl) {
