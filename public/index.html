@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hidden Proxy Launcher</title>
+  <title></title>
   <style>
     * {
       box-sizing: border-box;
@@ -12,13 +12,8 @@
     }
 
     body {
-      align-items: center;
-      background: #050505;
-      color: #fff;
-      display: flex;
-      font-family: Arial, sans-serif;
+      background: #000;
       height: 100vh;
-      justify-content: center;
       overflow: hidden;
       width: 100%;
     }
@@ -32,17 +27,16 @@
 
     .container {
       background: #fff;
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 10px 45px rgba(0, 0, 0, 0.35);
-      color: #1c1c1c;
       display: none;
       left: 50%;
-      max-width: 720px;
-      padding: 28px;
+      max-width: 500px;
+      padding: 20px;
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-      width: min(90vw, 720px);
+      width: min(90vw, 500px);
       z-index: 2;
     }
 
@@ -60,11 +54,6 @@
         opacity: 1;
         transform: translate(-50%, -50%);
       }
-    }
-
-    h1 {
-      font-size: 20px;
-      margin-bottom: 16px;
     }
 
     .input-group {
@@ -97,29 +86,25 @@
       padding: 11px 20px;
     }
 
-    .hint {
-      color: #666;
-      font-size: 12px;
-      margin-top: 10px;
+    button:hover {
+      background: #2b2b2b;
     }
   </style>
 </head>
 <body>
-  <div class="blank-area" aria-label="Blank page"></div>
+  <div class="blank-area"></div>
 
-  <div class="container" id="proxyLauncher">
-    <h1>Enter a link to open in the proxy</h1>
+  <div class="container" id="launcher">
     <div class="input-group">
       <input id="urlInput" type="text" placeholder="https://example.com" />
-      <button id="openProxyButton" type="button">Open</button>
+      <button id="openButton" type="button">Go</button>
     </div>
-    <p class="hint">Triple-click anywhere on the blank page to reveal this input.</p>
   </div>
 
   <script>
-    const launcher = document.getElementById('proxyLauncher');
+    const launcher = document.getElementById('launcher');
     const urlInput = document.getElementById('urlInput');
-    const openProxyButton = document.getElementById('openProxyButton');
+    const openButton = document.getElementById('openButton');
 
     let clickCount = 0;
     let clickTimeout;
@@ -129,14 +114,13 @@
       urlInput.focus();
     }
 
-    function openProxy() {
+    function openUrl() {
       const rawUrl = urlInput.value.trim();
       if (!rawUrl) {
-        window.alert('Please enter a link first.');
         return;
       }
 
-      window.location.href = `/proxy.html?url=${encodeURIComponent(rawUrl)}`;
+      window.location.href = `/view?url=${encodeURIComponent(rawUrl)}`;
     }
 
     document.addEventListener('click', () => {
@@ -156,11 +140,11 @@
 
     urlInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-        openProxy();
+        openUrl();
       }
     });
 
-    openProxyButton.addEventListener('click', openProxy);
+    openButton.addEventListener('click', openUrl);
   </script>
 </body>
 </html>
