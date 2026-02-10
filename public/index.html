@@ -1,165 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wooow</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            width: 100%;
-            height: 100vh;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-        }
-        
-        .blank-area {
-            width: 100%;
-            height: 100%;
-            cursor: default;
-        }
-        
-        .container {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-        
-        .container.active {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -48%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #333;
-        }
-        
-        button {
-            padding: 12px 25px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        button:hover {
-            background: #555;
-        }
-        
-        .hint {
-            color: #999;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      align-items: center;
+      background: #fff;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      width: 100%;
+    }
+
+    #linkInput {
+      border: 1px solid #cfcfcf;
+      display: none;
+      font: 14px Arial, sans-serif;
+      outline: none;
+      padding: 7px 8px;
+      width: 280px;
+    }
+
+    #linkInput.show {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <div class="blank-area"></div>
-    
-    <div class="container">
-        <h1>Woooooow</h1>
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="Enter URL (e.g., https://example.com)" />
-            <button onclick="goToProxy()">Go</button>
-        </div>
-        <div class="hint">Enter a full URL to browse through the proxy</div>
-    </div>
+  <input id="linkInput" type="text" autocomplete="off" />
 
-    <script>
-        let clicks = 0;
-        let clickTimeout;
-        
-        document.addEventListener('click', function() {
-            clicks++;
-            
-            clearTimeout(clickTimeout);
-            
-            if (clicks === 3) {
-                document.querySelector('.container').classList.add('active');
-                document.getElementById('urlInput').focus();
-                clicks = 0;
-            }
-            
-            clickTimeout = setTimeout(function() {
-                clicks = 0;
-            }, 500);
-        });
-        
-        document.getElementById('urlInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                goToProxy();
-            }
-        });
-        
-        function goToProxy() {
-            let url = document.getElementById('urlInput').value.trim();
-            
-            if (!url) {
-                alert('Please enter a URL');
-                return;
-            }
-            
-            // Add protocol if missing
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-            
-            // Redirect to proxy endpoint
-            window.location.href = '/proxy?url=' + encodeURIComponent(url);
-        }
-    </script>
+  <script>
+    const linkInput = document.getElementById('linkInput');
+    let clicks = 0;
+    let timer;
+
+    function revealInput() {
+      linkInput.classList.add('show');
+      linkInput.focus();
+    }
+
+    document.addEventListener('click', () => {
+      clicks += 1;
+      clearTimeout(timer);
+
+      if (clicks === 3) {
+        revealInput();
+        clicks = 0;
+        return;
+      }
+
+      timer = setTimeout(() => {
+        clicks = 0;
+      }, 450);
+    });
+
+    linkInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') {
+        return;
+      }
+
+      const rawUrl = linkInput.value.trim();
+      if (!rawUrl) {
+        return;
+      }
+
+      window.location.href = `/go?url=${encodeURIComponent(rawUrl)}`;
+    });
+  </script>
 </body>
 </html>
