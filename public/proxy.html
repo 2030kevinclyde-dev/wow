@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proxy Browser</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      background: #111;
+      color: #eaeaea;
+      display: grid;
+      font-family: Arial, sans-serif;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    .toolbar {
+      align-items: center;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .toolbar input {
+      background: #000;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      flex: 1;
+      padding: 9px 10px;
+    }
+
+    .toolbar button {
+      background: #2f6df6;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 9px 16px;
+    }
+
+    iframe {
+      background: #fff;
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <input id="urlInput" type="text" placeholder="https://example.com" />
+    <button id="goButton" type="button">Go</button>
+  </div>
+  <iframe id="proxyFrame" title="Proxied page"></iframe>
+
+  <script>
+    const input = document.getElementById('urlInput');
+    const goButton = document.getElementById('goButton');
+    const frame = document.getElementById('proxyFrame');
+
+    function loadUrl(rawUrl) {
+      if (!rawUrl) {
+        return;
+      }
+      input.value = rawUrl;
+      frame.src = `/proxy?url=${encodeURIComponent(rawUrl)}`;
+    }
+
+    function startProxy() {
+      loadUrl(input.value.trim());
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    loadUrl(params.get('url') || '');
+
+    goButton.addEventListener('click', startProxy);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        startProxy();
+      }
+    });
+  </script>
+</body>
+</html>
