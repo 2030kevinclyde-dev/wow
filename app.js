@@ -1,45 +1,58 @@
 const express = require('express');
+const bridgeLib = require('http-proxy');
 const path = require('path');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serve static files
-app.use(express.static('public'));
+const relay = bridgeLib.createProxyServer({
+  changeOrigin: true,
+  xfwd: true,
+  secure: false,
+});
 
-// Route to serve index.html
+relay.on('error', (err, req, res) => {
+  if (res.headersSent) {
+    return;
+  }
+
+  res.status(502).send('Unable to open that link.');
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Hidden proxy route with triple-click trigger
-app.post('/hidden-proxy', (req, res) => {
-    // Implement your proxy logic here
-    // Example: res.json({ message: 'Proxy triggered!' });
-});
+app.get('/go', (req, res) => {
+  const rawUrl = (req.query.url || '').toString().trim();
 
-let clickCount = 0;
-let lastClickTime = 0;
+  if (!rawUrl) {
+    return res.status(400).send('Missing url.');
+  }
 
-// Placeholder for your triple-click detection logic
-app.post('/triple-click', (req, res) => {
-    const currentTime = Date.now();
-    if (currentTime - lastClickTime < 300) {
-        clickCount++;
-    } else {
-        clickCount = 1;
-    }
-    lastClickTime = currentTime;
+  let normalized = rawUrl;
+  if (!/^https?:\/\//i.test(normalized)) {
+    normalized = `https://${normalized}`;
+  }
 
-    if (clickCount === 3) {
-        // Trigger the hidden proxy
-        // e.g., make a request to /hidden-proxy
-        clickCount = 0; // Reset after triggering
-        res.json({ message: 'Triple-click detected! Triggering hidden proxy...' });
-    } else {
-        res.json({ message: 'Click registered.' });
-    }
+  let target;
+  try {
+    target = new URL(normalized);
+  } catch {
+    return res.status(400).send('Invalid URL.');
+  }
+
+  req.url = `${target.pathname}${target.search}` || '/';
+
+  relay.web(req, res, {
+    target: target.origin,
+    prependPath: false,
+    ignorePath: true,
+  });
 });
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
